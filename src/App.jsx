@@ -4,6 +4,9 @@ import api from './api/posts';
 function App() {
   const [posts, setPosts] = useState([])
 
+const deletePost = (index) => {
+  setPosts(prev => prev.filter((post, i) => i !== index));
+};  
 
 
   useEffect(() => {
@@ -26,15 +29,14 @@ function App() {
 
     fetchPosts()
   }, [])
-
-  console.log(posts)
-
+  
   return (
     <div>
       <h1 className="text-4xl font-bold text-center text-indigo-900">POSTS</h1>
-      <div className='grid grid-cols-2'>
-        {posts.map((post) => (
+      <div className="grid grid-cols-2">
+        {posts.map((post, index) => (
           <div
+            key={index}
             className="block max-w-lg mb-5 p-6 bg-white border border-gray-200 
       rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
           >
@@ -44,6 +46,12 @@ function App() {
               Location: {post.location}
             </p>
             <p className="text-indigo-900 font-bold">Link: {post.link}</p>
+            <button
+              onClick={() => deletePost(index)}
+              class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded"
+            >
+              Delete
+            </button>
           </div>
         ))}
       </div>
