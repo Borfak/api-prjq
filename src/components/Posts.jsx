@@ -1,44 +1,10 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
 import api from "../api/posts";
 
 
 const Posts = () => {
-		 function closeModal() {
-     setIsOpen(false);
-   }
-
-   function openModal() {
-     setIsOpen(true);
-   }
-
-   let [isOpen, setIsOpen] = useState(false);
-
+		
    const [posts, setPosts] = useState([]);
-
-   const [formData, setFormData] = useState({
-     lat: "",
-     lon: "",
-     location: "",
-     link: "",
-   });
-
-   const handleChange = (event) => {
-     const { name, value } = event.target;
-     setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
-   };
-
-   const handleSubmit = async (event) => {
-     event.preventDefault();
-     setPosts((prev) => [formData, ...prev]);
-     setFormData({
-       lat: "",
-       lon: "",
-       location: "",
-       link: "",
-     });
-     closeModal();
-   };
 
    const deletePost = (index) => {
      setPosts((prev) => prev.filter((post, i) => i !== index));

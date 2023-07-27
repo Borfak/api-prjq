@@ -3,17 +3,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import api from "../api/osbb";
 
 const SLoginForm = () => {
-  let [isOpen, setIsOpen] = useState(false);
 
   let [loginIsOpen, setLoginIsOpen] = useState(false);
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
 
   function openLoginModal() {
     setLoginIsOpen(true);
