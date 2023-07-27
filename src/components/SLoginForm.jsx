@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-
+import api from "../api/osbb";
 
 const SLoginForm = () => {
   let [isOpen, setIsOpen] = useState(false);
@@ -23,42 +23,46 @@ const SLoginForm = () => {
     setLoginIsOpen(false);
   }
 
-  const [loginData, setLoginData] = useState({
-    phoneNum: "",
-    password: "",
-  });
-
-  const LoginHandleSubmit = async (event) => {
-    event.preventDefault();
-
-    const url = "https://api.osbb.devserver.cc/authentication/login";
-
-    const request = {
-      clientId: "OSBB_CABINET_WEB",
-      clientType: "WEB",
-      deviceId: "3eb8f083-a18e-4ecd-a3b0-259553c75a5f",
-      login: phone,
-      password: password,
-    };
-    console.log(request);
-
-    window.localStorage.setItem("login", phone);
-    window.localStorage.setItem("password", password);
-
-    setPhone("");
-    setPassword("");
-  };
-
-
-  const loginHandleChange = (event) => {
-    const { name, value } = event.target;
-    setLoginData((prevLoginData) => ({ ...prevLoginData, [name]: value }));
-  };
-
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+
+  const LoginHandleSubmit = async (event) => {
+    event.preventDefault();
+
+    const isPhoneValid = validatePhone(phone);
+    const isPasswordValid = validatePassword(password);
+
+    if (isPhoneValid && isPasswordValid) {
+      const url = "/authentication/login";
+
+      const request = {
+        clientId: "OSBB_CABINET_WEB",
+        clientType: "WEB",
+        deviceId: "3eb8f083-a18e-4ecd-a3b0-259553c75a5f",
+        login: phone,
+        password: password,
+      };
+      try {
+        const response = await api.post(url, request);
+        console.log(response.data);
+      } catch (error) {
+        setPasswordError("Invalid phone number or password");
+        setPassword("");
+        return;
+      }
+
+      console.log(request);
+      window.localStorage.setItem("login", phone);
+      window.localStorage.setItem("password", password);
+      setPhone("");
+      setPassword("");
+      closeLoginModal();
+    } else {
+      console.log("Invalid phone number or password");
+    }
+  };
 
   const validatePhone = (value) => {
     const phonePattern = /^\+380\d{9}$/;
@@ -138,11 +142,11 @@ const SLoginForm = () => {
                           onChange={(e) => setPhone(e.target.value)}
                           onBlur={() => validatePhone(phone)}
                         />
-                          {phoneError && (
-                            <span className="text-red-500 font-bold">
-                              {phoneError}
-                            </span>
-                          )}
+                        {phoneError && (
+                          <span className="text-red-500 font-bold">
+                            {phoneError}
+                          </span>
+                        )}
                       </div>
                       <div className="mb-2">
                         <label className="font-bold" htmlFor="password">
@@ -164,7 +168,7 @@ const SLoginForm = () => {
 
                       <div className="flex items-center justify-center">
                         <button
-                        onClick={LoginHandleSubmit}
+                          onClick={LoginHandleSubmit}
                           className="flex bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                           type="submit"
                         >
